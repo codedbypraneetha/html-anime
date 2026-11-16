@@ -3,7 +3,10 @@ import { resolve, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { compileFilm } from "./film.js";
 import { SCRIPTS } from "./compile.js";
+import { createRequire } from "node:module";
 
+const require = createRequire(import.meta.url);
+const gsapVersion = require("../package.json").dependencies.gsap;
 const esc = value => String(value).replace(/[&<>"']/g, c => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[c]));
@@ -22,7 +25,7 @@ html,body{margin:0;background:${colors.ink}}
 #root{position:relative;width:${w}px;height:${h}px;overflow:hidden;background:${colors.sky}}
 svg{width:100%;height:100%}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@${gsapVersion}/dist/gsap.min.js"></script>
 </head><body>
 <div id="root" data-composition-id="film" data-start="0" data-duration="${seconds}" data-width="${w}" data-height="${h}">
 <svg viewBox="0 0 ${w} ${h}" aria-label="${esc(scene.logline)}">

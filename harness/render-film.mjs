@@ -43,7 +43,7 @@ export async function renderShots(timelinePath, htmlDir, outputDir, options = {}
       let encoder;
       try {
         // Supply pinned GSAP locally so rendering does not require network access.
-        await page.route("https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js",
+        await page.route("**/gsap@*/dist/gsap.min.js",
           route => route.fulfill({ status: 200, contentType: "application/javascript", body: gsapCode }));
         await page.goto(pathToFileURL(join(resolve(htmlDir), shot.id, "index.html")).href, { waitUntil: "load" });
         await page.evaluate(() => document.fonts.ready);

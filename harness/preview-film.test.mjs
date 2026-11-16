@@ -14,12 +14,21 @@ try {
   const timeline = JSON.parse(await readFile(join(dir, "timeline.json"), "utf8"));
   assert.equal(timeline.totalFrames, 1440);
   for (let i = 1; i <= 3; i++) {
-    const html = await readFile(join(dir, `scene-${String(i).padStart(3, "0")}`, "index.html"), "utf8");
-    assert.match(html, /data-composition-id="film"/);
-    assert.match(html, /data-duration="20"/);
-    assert.match(html, /window.__timelines\["film"\]/);
-    assert.match(html, /<svg /);
-  }
+  const html = await readFile(join(dir, `scene-${String(i).padStart(3, "0")}`, "index.html"), "utf8");
+  const gsapScript = html.match(
+    /<script src="(https:\/\/cdn\.jsdelivr\.net\/npm\/gsap@[^"]+\/dist\/gsap\.min\.js)"><\/script>/
+  );
+  assert.ok(gsapScript, "Preview should include the GSAP CDN script");
+  assert.match(
+    gsapScript[1],
+    /^https:\/\/cdn\.jsdelivr\.net\/npm\/gsap@[^/]+\/dist\/gsap\.min\.js$/,
+    "GSAP URL should match the renderer's wildcard route"
+  );
+  assert.match(html, /data-composition-id="film"/);
+  assert.match(html, /data-duration="20"/);
+  assert.match(html, /window.__timelines\["film"\]/);
+  assert.match(html, /<svg /);
+}
   console.log("Film preview generation tests passed");
 } finally {
   await rm(dir, { recursive: true, force: true });

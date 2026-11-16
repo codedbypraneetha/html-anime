@@ -8,7 +8,13 @@ import { fileURLToPath } from "node:url";
 // Exercise the real entry points from paths whose characters must be URL-encoded.
 const dir = await mkdtemp(join(tmpdir(), "html-anime #100%-"));
 try {
-  await writeFile(join(dir, "package.json"), JSON.stringify({ type: "module" }));
+  await writeFile(
+    join(dir, "package.json"),
+    JSON.stringify({
+      type: "module",
+      dependencies: { gsap: "3.14.2" }
+    })
+  );
   const harness = join(dir, "harness");
   await cp(new URL(".", import.meta.url), harness, { recursive: true });
   for (const name of ["assemble-film", "preview-film", "render-film"]) {
