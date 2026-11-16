@@ -15,8 +15,19 @@ const require = createRequire(import.meta.url);
 
 export function validateRenderConfig(film) {
   validateTimeline(film);
+
   if (film.fps !== 24) throw new Error("Renderer currently supports 24 FPS only");
   if (film.width > 3840 || film.height > 3840) throw new Error("Canvas exceeds renderer limit");
+
+  for (const shot of film.shots) {
+    if (!Number.isFinite(shot.seconds) || shot.seconds <= 0 ||
+        shot.seconds * film.fps !== shot.frames) {
+      throw new Error(
+        `${shot.id}: invalid seconds ${shot.seconds} for ${shot.frames} frames at ${film.fps} FPS`,
+      );
+    }
+  }
+
   return true;
 }
 

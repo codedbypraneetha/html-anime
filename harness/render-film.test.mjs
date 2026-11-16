@@ -42,6 +42,32 @@ test("checkComposition reports dimension mismatches", () => {
 test("validateRenderConfig accepts a valid 24 FPS timeline", () => {
   assert.equal(validateRenderConfig(film), true);
 });
+for (const [label, seconds] of [
+  ["missing", undefined],
+  ["zero", 0],
+  ["negative", -1],
+  ["NaN", NaN],
+  ["Infinity", Infinity],
+  ["mismatched", 8],
+]) {
+  test(`validateRenderConfig rejects ${label} shot seconds`, () => {
+    const shot = { ...film.shots[0], seconds };
+
+    if (seconds === undefined) {
+      delete shot.seconds;
+    }
+
+    assert.throws(
+      () => validateRenderConfig({ ...film, shots: [shot] }),
+      error => {
+        assert.ok(error.message.includes("scene-001"));
+        assert.ok(error.message.includes(String(seconds)));
+        assert.ok(error.message.includes("480"));
+        return true;
+      },
+    );
+  });
+}
 
 for (const fps of [23, 25, 30, 60]) {
   test(`validateRenderConfig rejects ${fps} FPS`, () => {
